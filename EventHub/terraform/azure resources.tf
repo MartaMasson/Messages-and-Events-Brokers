@@ -92,7 +92,7 @@ resource "azurerm_windows_function_app" "labsEventHubFunctionApp" {
 
   site_config {
       application_stack {
-      dotnet_version = "4.0"
+      dotnet_version = "v4.0"
     }
   }
 }
