@@ -1,0 +1,121 @@
+# .NET Core Function App to Windows on Azure
+# Build a .NET Core function app and deploy it to Azure as a Windows function App.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/languages/dotnet-core
+
+
+#trigger:
+#  branches:
+#    include:
+#    - master
+
+trigger:
+  branches:
+    exclude:
+    - '*'
+
+
+# This pipeline will be triggered everytime ServiceBus Terraform pipelines executes with success
+#resources:
+#  pipelines:
+#  - pipeline: Messages and Events Brokers - ServiceBus - Terraform # Name of the pipeline resource.
+#    source: azure-pipelines-ServiceBus-Terraform # The name of the pipeline referenced by this pipeline resource.
+#    #project: FabrikamProject # Required only if the source pipeline is in another project
+#    trigger: true # Run azure-pipelines-ServiceBus-Functions pipeline when any run of azure-pipelines-ServiceBus-Terraform completes
+
+
+variables:
+  # Azure Resource Manager connection created during pipeline creation
+  azureSubscription: 'sc-dowdtf'
+
+  # Function app name
+  functionAppName: 'labsservicebusfunctionapp'
+
+  # Agent VM image name
+  vmImageName: 'windows-latest'
+
+  # Working Directory
+  workingDirectory: '$(System.DefaultWorkingDirectory)/ServiceBus/MessageBusTriggerFunctions'
+
+stages:
+- stage: Build
+  displayName: Build stage
+
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: Build
+      inputs:
+        command: 'build'
+        projects: |
+          $(workingDirectory)/*.csproj
+        arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration Release
+
+    - task: ArchiveFiles@2
+      displayName: 'Archive files'
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/publish_output'
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+        replaceExistingArchive: true
+
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+      artifact: drop
+
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+  condition: succeeded()
+
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    environment: 'development'
+    pool:
+      vmImage: $(vmImageName)
+
+    strategy:
+      runOnce:
+        deploy:
+
+          steps:
+          - task: AzureFunctionApp@1
+            displayName: 'Azure functions app deploy'
+            inputs:
+              azureSubscription: '$(azureSubscription)'
+              appType: functionApp
+              appName: $(functionAppName)
+              package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+
+          - task: AzureAppServiceSettings@1
+            displayName: 'Set Application Settings'
+            inputs: 
+              azureSubscription: '$(azureSubscription)'
+              appName: $(functionAppName)
+              # resourceGroupName: $(ResourcGroup)
+
+              # It contains hardcode and such practice is not good. This just simplifies for didatic purposes.
+              appSettings: |
+                [                  
+                  {
+                    "name": "AzureWebJobsStorage",
+                    "value": "DefaultEndpointsProtocol=https;AccountName=labsservicebussa;AccountKey=xxx;EndpointSuffix=core.windows.net",
+                    "slotSetting": false
+                  },
+                  {
+                    "name": "FUNCTIONS_WORKER_RUNTIME",
+                    "value": "dotnet", 
+                    "slotSetting": false
+                  },
+                  {
+                    "name": "labsServiceBusNamespace_SERVICEBUS",
+                    "value": "x-x-x-", 
+                    "slotSetting": false
+                  }
+                ]

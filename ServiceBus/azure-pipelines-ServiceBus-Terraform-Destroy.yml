@@ -1,0 +1,64 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+#trigger:
+#  branches:
+#    include:
+#    - master
+
+trigger:
+  branches:
+    exclude:
+    - '*'
+ 
+pool:
+  vmImage: ubuntu-latest
+
+
+jobs:
+- job: Infrastructure
+  displayName: Terraform for Messages and Brokers Examples - MessageBus
+  pool:
+    vmImage: ubuntu-latest
+  steps:
+  - checkout: self
+  - task: TerraformInstaller@0
+    displayName: Install Terraform latest
+
+  - task: TerraformTaskV2@2
+    displayName: 'Terraform : Init'
+    inputs:
+      provider: 'azurerm'
+      command: init
+      backendServiceArm: 'sc-dowdtf'
+      backendAzureRmResourceGroupName: rg-dowd-devops
+      backendAzureRmStorageAccountName: dowdtf
+      backendAzureRmContainerName: tfstateservicebus-labs-resources
+      backendAzureRmKey: terraform.tfstate
+      workingDirectory: '$(System.DefaultWorkingDirectory)/ServiceBus/terraform/'
+  
+  - task: TerraformTaskV2@2
+    displayName: 'Terraform : Validate'
+    inputs:
+      provider: 'azurerm'
+      command: validate
+      backendServiceArm: 'sc-dowdtf'
+      backendAzureRmResourceGroupName: rg-dowd-devops
+      backendAzureRmStorageAccountName: dowdtf
+      backendAzureRmContainerName: tfstateservicebus-labs-resources
+      backendAzureRmKey: terraform.tfstate
+      workingDirectory: '$(System.DefaultWorkingDirectory)/ServiceBus/terraform/'
+
+  - task: TerraformTaskV2@2
+    displayName: 'Terraform : Destroy'
+    inputs:
+      provider: 'azurerm'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/ServiceBus/terraform/'
+      environmentServiceNameAzureRM: 'sc-dowdtf'
+      backendAzureRmResourceGroupName: dowd-devops-rg
+      backendAzureRmStorageAccountName: dowdtf
+      backendAzureRmContainerName: tfstateservicebus-labs-resources
+      backendAzureRmKey: terraform.tfstate
+      command: destroy
