@@ -93,7 +93,7 @@ resource "azurerm_windows_function_app" "labsServiceBusFunctionApp" {
 
   site_config {
       application_stack {
-      dotnet_version = "3.1"
+      dotnet_version = "v4.0"
     }
   }
 }
