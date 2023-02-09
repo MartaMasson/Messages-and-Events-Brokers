@@ -105,7 +105,7 @@ stages:
                 [                  
                   {
                     "name": "AzureWebJobsStorage",
-                    "value": "Endpoint=sb://labsservicebusnamespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SRBD4uKwiIxGnJDu/Vsj2Dxew8QPPPh8+qJ/hBhR3po=",
+                    "value": "xxxxx",
                     "slotSetting": false
                   },
                   {
@@ -115,7 +115,7 @@ stages:
                   },
                   {
                     "name": "labsServiceBusNamespace_SERVICEBUS",
-                    "value": "Endpoint=sb://labsservicebusnamespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SRBD4uKwiIxGnJDu/Vsj2Dxew8QPPPh8+qJ/hBhR3po=", 
+                    "value": "xxxx", 
                     "slotSetting": false
                   }
                 ]
