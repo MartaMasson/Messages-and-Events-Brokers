@@ -11,7 +11,7 @@ namespace EventHubSender
     {
 
         // connection string to the Event Hubs namespace
-        private const string connectionString = "Coloque aqui a connection string do eventhub";
+        private const string connectionString = "Endpoint=sb://labseventhubnamespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=ZniOYyPO51Fbs230ewUP1kZtb55hydcev3LWlzYVqts=";
 
         // name of the event hub
         private const string eventHubName = "lab1eventhub";
@@ -35,7 +35,7 @@ namespace EventHubSender
             for (int i = 1; i <= numOfEvents; i++)
             {
 
-                if (!eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes($"Event collection 8 - {i}"))))
+                if (!eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes($"Event collection teste com o time da BRF - {i}"))))
                 {
                     // if it is too large for the batch
                     throw new Exception($"Event collection 1 - {i} is too large for the batch and cannot be sent.");

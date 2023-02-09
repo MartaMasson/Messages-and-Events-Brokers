@@ -35,7 +35,7 @@ namespace MessageBusSender
             for (int i = 1; i <= numOfMessages; i++)
             {
 
-                mymsg = $"Message in queue/topic - commit testing 2 - {i}";
+                mymsg = $"Message in queue/topic - teste inicial - {i}";
 
                 // try adding a message to the batch
                 if (!messageBatch.TryAddMessage(new ServiceBusMessage(mymsg)))

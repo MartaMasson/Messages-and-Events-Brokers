@@ -11,9 +11,9 @@ namespace EventHubProcessor
     class Program
     {
 
-        private const string ehubNamespaceConnectionString = "Endpoint=sb://labseventhubnamespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=C72UaFHyLc02gBgW/HmzSDHFszrSew8w0Sszw/mVbAE=";
+        private const string ehubNamespaceConnectionString = "Coloque aqui sua string de conexão do EventHub";
         private const string eventHubName = "lab1eventhub";
-        private const string blobStorageConnectionString = "DefaultEndpointsProtocol=https;AccountName=labseventhubsa;AccountKey=LQgsO9UXAsZOcprn54dK86eHT3lBgKZG66DickJOrUywtddPtMyj/s7cpuJyMpev7eL+Tlnae/fQ+ASthn18lw==;EndpointSuffix=core.windows.net";
+        private const string blobStorageConnectionString = "Coloque aqui a string de conexão da storage account criada pra checkpoint ";
         private const string blobContainerName = "labseventhubsacontainer";
 
         static BlobContainerClient storageClient;
