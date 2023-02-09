@@ -102,7 +102,7 @@ stages:
                 [                  
                   {
                     "name": "AzureWebJobsStorage",
-                    "value": "DefaultEndpointsProtocol=https;AccountName=labseventhubsa;AccountKey=xxxxxxxx=;EndpointSuffix=core.windows.net",
+                    "value": "xxxxx",
                     "slotSetting": false
                   },
                   {
